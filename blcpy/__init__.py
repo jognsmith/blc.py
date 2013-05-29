@@ -125,6 +125,8 @@ class Query(object):
     required = []
     command = "query"
     _looping = False
+    json = {}
+    data = {}
 
     def __init__(self, **kwargs):
         self.kwargs = kwargs
@@ -137,9 +139,11 @@ class Query(object):
     def __call__(self):
         t = _Transaction(self.command)
         d = t(self.kwargs, _looping=self._looping)
+        self.data = d
         if d['success'] is not True:
             raise CommandFailure("'{0}'".format(d['message']))
-        return d['payload']
+        self.json = d['payload']
+        return self.json
 
 
 class Check(Query):
